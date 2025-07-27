@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🌲 QR Code Frontend (Next.js)
 
-## Getting Started
+Ini adalah frontend untuk aplikasi **Forest QR Management** yang dibangun dengan **Next.js** dan Tailwind CSS. Sistem ini terhubung ke backend Express.js dan digunakan untuk mengelola data pohon, generate QR Code, serta mendownload PDF dengan atau tanpa desain.
 
-First, run the development server:
+---
+
+## 🚀 Fitur
+
+- ✅ Login dan Register dengan JWT
+- ✅ Role-based Access (Admin & User)
+- ✅ CRUD Data Pohon
+- ✅ Generate QR Code tiap pohon
+- ✅ Download semua QR Code dalam bentuk PDF (desain & tanpa desain)
+- ✅ Halaman detail pohon dengan penjelasan AI (opsional)
+- ✅ Responsif dengan Tailwind CSS
+- ✅ Proteksi halaman dengan middleware JWT
+
+---
+
+## 🧑‍💻 Tech Stack
+
+- **Frontend:** [Next.js 14](https://nextjs.org/)
+- **Style:** [Tailwind CSS](https://tailwindcss.com/)
+- **HTTP Client:** [Axios](https://axios-http.com/)
+- **Form Validation:** react-hook-form + yup
+- **State Management:** React hooks + Context API
+
+---
+
+## 🛠️ Instalasi
+
+```bash
+git clone https://github.com/username/qr-frontend.git
+cd qr-frontend
+npm install
+```
+
+Buat file `.env.local`:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
+```
+
+Lalu jalankan:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🗂️ Struktur Folder
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/
+├── login/
+│   └── page.jsx           # Halaman Login
+├── register/
+│   └── page.jsx           # Halaman Register
+├── dashboard/
+│   ├── layout.jsx         # Layout dashboard
+│   └── datapohon/
+│       ├── page.jsx       # Halaman utama Data Pohon
+│       └── DetailButton.jsx
+├── components/
+│   └── Navbar.jsx         # Navigasi utama
+├── lib/
+│   └── api.js             # Axios instance
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🧾 Endpoints API (Dari Backend)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Fungsi                     | Endpoint                              | Method |
+|---------------------------|----------------------------------------|--------|
+| Login                     | `/api/login`                           | POST   |
+| Register                  | `/api/register`                        | POST   |
+| Ambil semua pohon         | `/api/trees`                           | GET    |
+| Tambah pohon              | `/api/trees`                           | POST   |
+| Download PDF (tanpa desain) | `/static/pdf/qr-without-template.pdf` | GET    |
+| Download PDF (dengan desain) | `/api/trees/printallPDFDesign`        | POST   |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🔒 Proteksi Route
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Setiap route di dalam `/dashboard/*` hanya dapat diakses jika JWT token valid. Token disimpan di `localStorage`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📦 Build untuk Produksi
+
+```bash
+npm run build
+npm start
+```
+
+---
+
+## 📝 Catatan
+
+- Pastikan backend telah berjalan terlebih dahulu (`qr-backend`).
+- Folder `pdfs` di backend harus dapat diakses publik jika ingin download tanpa desain.
+- Jangan lupa sesuaikan URL `NEXT_PUBLIC_API_URL` di `.env.local`.
+
+---
+
+## 👨‍💻 Kontribusi
+
+Pull request sangat diterima. Untuk masalah besar, silakan buka [Issue](https://github.com/username/qr-frontend/issues) terlebih dahulu.
+
+---
+
+## 📄 Lisensi
+
+MIT License.
