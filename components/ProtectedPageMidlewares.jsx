@@ -1,10 +1,11 @@
 'use client';
+
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import API from '@/lib/api';
+import API from '@/lib/api'; // Axios instance
 
-export default function ProtectedPageMidlewares({ children }) {
+export default function ProtectedPageMiddleware({ children }) {
   const router = useRouter();
 
   useEffect(() => {
@@ -13,24 +14,23 @@ export default function ProtectedPageMidlewares({ children }) {
 
       if (!token) {
         toast.error('Silakan login terlebih dahulu!');
-        return router.push('/login');
+        return router.replace('/login');
       }
 
       try {
-        // Kirim token ke backend untuk verifikasi
-        const res = await API.get('/auth/check-token', {
+        await API.get('/auth/check-token', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
-        // Jika token valid, tidak melakukan apa-apa
+        // Token valid → lanjut
       } catch (err) {
-        // Token expired atau tidak valid
+        console.error('Token tidak valid:', err);
         toast.error('Sesi Anda telah berakhir. Silakan login ulang.');
         localStorage.removeItem('token');
+
         setTimeout(() => {
-          router.push('/login');
+          router.replace('/login');
         }, 1000);
       }
     };
