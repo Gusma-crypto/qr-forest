@@ -1,4 +1,4 @@
-# 🌲 QR Code Frontend (Next.js)
+# 🌲 QR Code Frontend (Next.js)|| gunardi
 
 Ini adalah frontend untuk aplikasi **Forest QR Management** yang dibangun dengan **Next.js** dan Tailwind CSS. Sistem ini terhubung ke backend Express.js dan digunakan untuk mengelola data pohon, generate QR Code, serta mendownload PDF dengan atau tanpa desain.
 
@@ -72,13 +72,13 @@ app/
 
 ## 🧾 Endpoints API (Dari Backend)
 
-| Fungsi                     | Endpoint                              | Method |
-|---------------------------|----------------------------------------|--------|
-| Login                     | `/api/login`                           | POST   |
-| Register                  | `/api/register`                        | POST   |
-| Ambil semua pohon         | `/api/trees`                           | GET    |
-| Tambah pohon              | `/api/trees`                           | POST   |
-| Download PDF (tanpa desain) | `/static/pdf/qr-without-template.pdf` | GET    |
+| Fungsi                       | Endpoint                              | Method |
+| ---------------------------- | ------------------------------------- | ------ |
+| Login                        | `/api/login`                          | POST   |
+| Register                     | `/api/register`                       | POST   |
+| Ambil semua pohon            | `/api/trees`                          | GET    |
+| Tambah pohon                 | `/api/trees`                          | POST   |
+| Download PDF (tanpa desain)  | `/static/pdf/qr-without-template.pdf` | GET    |
 | Download PDF (dengan desain) | `/api/trees/printallPDFDesign`        | POST   |
 
 ---
