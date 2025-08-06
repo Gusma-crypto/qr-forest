@@ -1,24 +1,27 @@
-'use client';
-import { useEffect, useState } from 'react';
-import API from '@/lib/api';
-import { Plus, Printer, Trash2, Download, Info, Search } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import DetailButton from '@/components/DetailButton';
+"use client";
+import { useEffect, useState } from "react";
+import API from "@/lib/api";
+import { Plus, Printer, Trash2, Download, Info, Search } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import DetailButton from "@/components/DetailButton";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function DataPohonTable() {
   const [trees, setTrees] = useState([]);
   const [selected, setSelected] = useState([]);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showPrintOptions, setShowPrintOptions] = useState(false);
   const itemsPerPage = 5;
- 
+  const router = useRouter();
+
   const fetchTrees = async () => {
     try {
-      const res = await API.get('/trees');
+      const res = await API.get("/trees");
       setTrees(res.data);
     } catch (err) {
-      console.error('Gagal fetch data pohon:', err);
+      console.error("Gagal fetch data pohon:", err);
     }
   };
 
@@ -26,21 +29,13 @@ export default function DataPohonTable() {
     fetchTrees();
   }, []);
 
-  const filteredTrees = trees.filter((tree) =>
-    tree.name.toLowerCase().includes(search.toLowerCase()) ||
-    tree.species.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredTrees = trees.filter((tree) => tree.name.toLowerCase().includes(search.toLowerCase()) || tree.species.toLowerCase().includes(search.toLowerCase()));
 
   const totalPages = Math.ceil(filteredTrees.length / itemsPerPage);
-  const currentItems = filteredTrees.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const currentItems = filteredTrees.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleCheckbox = (id) => {
-    setSelected((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+    setSelected((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
   };
 
   const handleSelectAll = () => {
@@ -52,20 +47,39 @@ export default function DataPohonTable() {
   };
 
   const handleDeleteOne = async (id) => {
-    if (confirm('Yakin hapus data ini?')) {
-      await API.delete(`/trees/${id}`);
-      fetchTrees();
+    if (confirm("Yakin hapus data ini?")) {
+      try {
+        // console.log(`🗑️ Menghapus data pohon dengan ID: ${id}...`);
+        const response = await API.delete(`/trees/${id}`);
+        toast.success("Berhasil Hapus data p");
+        // console.log("✅ Data berhasil dihapus:", response.data);
+        fetchTrees(); // Refresh data pohon
+      } catch (error) {
+        console.error("❌ Gagal menghapus data pohon:", error.response?.data || error.message);
+      }
+    } else {
+      console.log("❎ Penghapusan dibatalkan oleh pengguna.");
     }
   };
 
   const handleDeleteSelected = async () => {
-    if (selected.length === 0) return;
-    if (confirm(`Hapus ${selected.length} data?`)) {
-      for (const id of selected) {
-        await API.delete(`/trees/${id}`);
-      }
-      setSelected([]);
-      fetchTrees();
+    if (selected.length === 0) {
+      toast.warning("Pilih data terlebih dahulu.");
+      return;
+    }
+
+    const confirmDelete = confirm(`Yakin hapus ${selected.length} data?`);
+    if (!confirmDelete) return;
+
+    try {
+      console.log("Menghapus ID:", selected); // log ke console
+      await API.post("/trees/deleteAllCheck", { ids: selected });
+      fetchTrees(); // refresh data setelah hapus
+      setSelected([]); // kosongkan checkbox
+      toast.success(" Berhasil menghapus data terpilih.");
+    } catch (error) {
+      console.error("Gagal menghapus data:", error);
+      toast.error("❌ Gagal menghapus data terpilih.");
     }
   };
 
@@ -74,22 +88,22 @@ export default function DataPohonTable() {
   };
   //download
   const downloadPDF = async () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/trees/printallPDFDesign`, {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (!res.ok) throw new Error('Gagal fetch PDF');
+      if (!res.ok) throw new Error("Gagal fetch PDF");
 
       const blob = await res.blob(); // 👈 langsung ambil blob
       const url = URL.createObjectURL(blob);
 
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = `qr-cetak-dengan-desain-${Date.now()}.pdf`;
       document.body.appendChild(a);
@@ -97,13 +111,18 @@ export default function DataPohonTable() {
       a.remove();
       URL.revokeObjectURL(url);
     } catch (err) {
-      console.error('❌ Error saat download:', err);
-      alert('Gagal download. Coba lagi nanti.');
+      console.error("❌ Error saat download:", err);
+      alert("Gagal download. Coba lagi nanti.");
     }
   };
-  
+
   const handleTambahData = () => {
-    alert('Navigasi ke halaman tambah data...');
+    try {
+      // Navigasi ke halaman detail berdasarkan ID
+      router.push("/dashboard/datapohon/create");
+    } catch (error) {
+      console.error("❌ Gagal navigasi ke halaman create:", error);
+    }
   };
 
   const handleDetailOne = async (id) => {
@@ -111,7 +130,7 @@ export default function DataPohonTable() {
       // Navigasi ke halaman detail berdasarkan ID
       router.push(`/dashboard/datapohon/${id}`);
     } catch (error) {
-      console.error('❌ Gagal navigasi ke halaman detail:', error);
+      console.error("❌ Gagal navigasi ke halaman detail:", error);
     }
   };
 
@@ -120,16 +139,10 @@ export default function DataPohonTable() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold text-gray-800">Data Pohon</h2>
         <div className="space-x-2 flex">
-          <button
-            onClick={handleTambahData}
-            className="flex items-center bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700"
-          >
+          <button onClick={handleTambahData} className="flex items-center bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700">
             <Plus size={18} className="mr-2" /> Tambah Data
           </button>
-          <button
-            onClick={handlePrintAll}
-            className="flex items-center bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700"
-          >
+          <button onClick={handlePrintAll} className="flex items-center bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700">
             <Printer size={18} className="mr-2" /> Cetak QR Semua
           </button>
 
@@ -137,16 +150,12 @@ export default function DataPohonTable() {
           {showPrintOptions && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <Card className="w-[320px] text-center space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  Pilih Opsi Cetak
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Bagaimana kamu ingin mencetak semua QR code?
-                </p>
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Pilih Opsi Cetak</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Bagaimana kamu ingin mencetak semua QR code?</p>
                 <div className="space-y-2">
                   <button
                     onClick={() => {
-                      downloadPDF('with-template');
+                      downloadPDF("with-template");
                       setShowPrintOptions(false);
                     }}
                     className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
@@ -155,27 +164,21 @@ export default function DataPohonTable() {
                   </button>
                   <button
                     onClick={() => {
-                      downloadPDF('without-template');
+                      downloadPDF("without-template");
                       setShowPrintOptions(false);
                     }}
                     className="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700"
                   >
                     Tanpa Desain
                   </button>
-                  <button
-                    onClick={() => setShowPrintOptions(false)}
-                    className="text-red-500 hover:underline mt-2"
-                  >
+                  <button onClick={() => router.push("/dashboard/datapohon")} className="text-red-500 hover:underline mt-2">
                     Batal
                   </button>
                 </div>
               </Card>
             </div>
           )}
-          <button
-            onClick={handleDeleteSelected}
-            className="flex items-center bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700"
-          >
+          <button onClick={handleDeleteSelected} className="flex items-center bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700">
             <Trash2 size={18} className="mr-2" /> Hapus Terpilih
           </button>
         </div>
@@ -198,14 +201,7 @@ export default function DataPohonTable() {
           <thead className="bg-gray-100 text-gray-700">
             <tr>
               <th className="p-3 text-center">
-                <input
-                  type="checkbox"
-                  onChange={handleSelectAll}
-                  checked={
-                    selected.length === currentItems.length &&
-                    currentItems.length > 0
-                  }
-                />
+                <input type="checkbox" onChange={handleSelectAll} checked={selected.length === currentItems.length && currentItems.length > 0} />
               </th>
               <th className="p-3 text-left">Nama</th>
               <th className="p-3 text-left">Spesies</th>
@@ -219,41 +215,28 @@ export default function DataPohonTable() {
             {currentItems.map((tree) => (
               <tr key={tree.id} className="border-t hover:bg-gray-50">
                 <td className="p-3 text-center">
-                  <input
-                    type="checkbox"
-                    checked={selected.includes(tree.id)}
-                    onChange={() => handleCheckbox(tree.id)}
-                  />
+                  <input type="checkbox" checked={selected.includes(tree.id)} onChange={() => handleCheckbox(tree.id)} />
                 </td>
                 <td className="p-3 text-gray-600">{tree.name}</td>
                 <td className="p-3 text-gray-600">{tree.species}</td>
                 <td className="p-3 text-gray-600">{tree.location}</td>
                 <td className="p-3 text-gray-600">{tree.age} tahun</td>
-                <td className="p-3 text-center">
-                  {tree.qr_code ? (
-                    <img
-                      src={tree.qr_code}
-                      alt="QR"
-                      className="w-16 h-16 object-contain mx-auto"
-                    />
-                  ) : (
-                    <span className="text-gray-400">Tidak ada</span>
-                  )}
-                </td>
+                <td className="p-3 text-center">{tree.qr_code ? <img src={tree.qr_code} alt="QR" className="w-16 h-16 object-contain mx-auto" /> : <span className="text-gray-400">Tidak ada</span>}</td>
                 <td className="p-3 text-center space-x-2">
-                  <a
-                    href={tree.qr_code}
-                    download={`qr_${tree.id}.png`}
-                    className="inline-flex items-center text-green-600 hover:underline"
-                  >
+                  {/* Tombol Unduh */}
+                  <a href={tree.qr_code} download={`qr_${tree.id}.png`} className="inline-flex items-center text-green-600 hover:underline">
                     <Download size={16} className="mr-1" />
                     Unduh
                   </a>
-                  <DetailButton id={tree.id} />
-                  <button
-                    onClick={() => handleDeleteOne(tree.id)}
-                    className="inline-flex items-center text-red-600 hover:underline"
-                  >
+
+                  {/* Icon Detail (Search) */}
+                  <button onClick={() => handleDetailOne(tree.id)} className="inline-flex items-center text-blue-600 hover:underline" title="Lihat Detail">
+                    <Search size={16} className="mr-1" />
+                    Detail
+                  </button>
+
+                  {/* Tombol Hapus */}
+                  <button onClick={() => handleDeleteOne(tree.id)} className="inline-flex items-center text-red-600 hover:underline">
                     <Trash2 size={16} className="mr-1" />
                     Hapus
                   </button>
@@ -277,16 +260,10 @@ export default function DataPohonTable() {
         </p>
         <p>Total: {trees.length} data</p>
         <div className="space-x-2">
-          <button
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
-          >
+          <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">
             Prev
           </button>
-          <button
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
-          >
+          <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">
             Next
           </button>
         </div>
