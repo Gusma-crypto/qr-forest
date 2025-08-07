@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import API from "@/lib/api";
-import { Plus, Printer, Trash2, Download, Info, Search } from "lucide-react";
+import { Plus, Printer, Trash2, Download, Info, Search, Eye } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import DetailButton from "@/components/DetailButton";
 import { useRouter } from "next/navigation";
@@ -91,16 +91,18 @@ export default function DataPohonTable() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/trees/printallPDFDesign`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await API.post(
+        "/trees/printallPDFDesign",
+        {}, // body kosong karena kamu hanya butuh POST tanpa data
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob", // 👈 untuk terima file blob
+        }
+      );
 
-      if (!res.ok) throw new Error("Gagal fetch PDF");
-
-      const blob = await res.blob(); // 👈 langsung ambil blob
+      const blob = new Blob([res.data], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
 
       const a = document.createElement("a");
@@ -134,54 +136,61 @@ export default function DataPohonTable() {
     }
   };
 
+  const handleShow = (qrcodeUrl) => {
+    router.push(qrcodeUrl);
+  };
+
   return (
     <div className="p-6 bg-white rounded-xl shadow-md">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-y-4">
         <h2 className="text-2xl font-bold text-gray-800">Data Pohon</h2>
-        <div className="space-x-2 flex">
-          <button onClick={handleTambahData} className="flex items-center bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700">
+
+        <div className="flex flex-col sm:flex-row sm:space-x-2 gap-y-2">
+          <button onClick={handleTambahData} className="flex items-center justify-center bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 w-full sm:w-auto">
             <Plus size={18} className="mr-2" /> Tambah Data
           </button>
-          <button onClick={handlePrintAll} className="flex items-center bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700">
+
+          <button onClick={handlePrintAll} className="flex items-center justify-center bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700 w-full sm:w-auto">
             <Printer size={18} className="mr-2" /> Cetak QR Semua
           </button>
 
-          {/* ✅ Popup Card Pilihan Cetak */}
-          {showPrintOptions && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <Card className="w-[320px] text-center space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Pilih Opsi Cetak</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">Bagaimana kamu ingin mencetak semua QR code?</p>
-                <div className="space-y-2">
-                  <button
-                    onClick={() => {
-                      downloadPDF("with-template");
-                      setShowPrintOptions(false);
-                    }}
-                    className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
-                  >
-                    Dengan Desain
-                  </button>
-                  <button
-                    onClick={() => {
-                      downloadPDF("without-template");
-                      setShowPrintOptions(false);
-                    }}
-                    className="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700"
-                  >
-                    Tanpa Desain
-                  </button>
-                  <button onClick={() => router.push("/dashboard/datapohon")} className="text-red-500 hover:underline mt-2">
-                    Batal
-                  </button>
-                </div>
-              </Card>
-            </div>
-          )}
-          <button onClick={handleDeleteSelected} className="flex items-center bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700">
+          <button onClick={handleDeleteSelected} className="flex items-center justify-center bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700 w-full sm:w-auto">
             <Trash2 size={18} className="mr-2" /> Hapus Terpilih
           </button>
         </div>
+
+        {/* ✅ Popup Card Pilihan Cetak */}
+        {showPrintOptions && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <Card className="w-[320px] text-center space-y-4">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Pilih Opsi Cetak</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Bagaimana kamu ingin mencetak semua QR code?</p>
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    downloadPDF("with-template");
+                    setShowPrintOptions(false);
+                  }}
+                  className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
+                >
+                  Dengan Desain
+                </button>
+                <button
+                  onClick={() => {
+                    downloadPDF("without-template");
+                    setShowPrintOptions(false);
+                  }}
+                  className="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700"
+                >
+                  Tanpa Desain
+                </button>
+                <button onClick={() => router.push("/dashboard/datapohon")} className="text-red-500 hover:underline mt-2">
+                  Batal
+                </button>
+              </div>
+            </Card>
+          </div>
+        )}
       </div>
 
       {/* Input pencarian dengan icon search dan border hijau */}
@@ -233,6 +242,11 @@ export default function DataPohonTable() {
                   <button onClick={() => handleDetailOne(tree.id)} className="inline-flex items-center text-blue-600 hover:underline" title="Lihat Detail">
                     <Search size={16} className="mr-1" />
                     Detail
+                  </button>
+
+                  <button onClick={() => handleShow(tree.qrcodeurl)} className="inline-flex items-center text-blue-600 hover:underline mr-3">
+                    <Eye size={16} className="mr-1" />
+                    Show
                   </button>
 
                   {/* Tombol Hapus */}

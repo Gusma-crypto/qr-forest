@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      router.push('/login');
+      router.push("/login");
     } else {
-      setUser({ name: 'User Example' }); // nanti diganti dari backend
+      setUser({ name: "User Example" }); // nanti diganti dari backend
     }
   }, []);
 
@@ -40,17 +40,9 @@ export default function DashboardPage() {
 
       <div className="space-y-8">
         {Array.from({ length: 20 }).map((_, i) => (
-          <div
-            key={i}
-            className="p-4 bg-gray-100 rounded-xl shadow-sm border border-gray-200"
-          >
-            <h3 className="text-lg font-semibold text-gray-700">
-              Konten Dummy #{i + 1}
-            </h3>
-            <p className="text-sm text-gray-600">
-              Ini adalah konten tambahan untuk menguji efek scroll pada navbar.
-              Scroll ke bawah untuk melihat perubahan tampilan navbar.
-            </p>
+          <div key={i} className="p-4 bg-gray-100 rounded-xl shadow-sm border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-700">Konten Dummy #{i + 1}</h3>
+            <p className="text-sm text-gray-600">Ini adalah konten tambahan untuk menguji efek scroll pada navbar. Scroll ke bawah untuk melihat perubahan tampilan navbar.</p>
           </div>
         ))}
       </div>
