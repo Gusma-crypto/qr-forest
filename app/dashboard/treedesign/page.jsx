@@ -13,6 +13,7 @@ export default function TreeDesignPage() {
   const [form, setForm] = useState({
     title: "",
     qr_color: "#000000",
+    text_color: "#000000",
     show_logo: false,
     global_title: "",
     background_url: null,
@@ -136,6 +137,12 @@ export default function TreeDesignPage() {
           <span className="text-sm">{form.qr_color}</span>
         </div>
 
+        <div className="flex items-center gap-3">
+          <label className="text-sm font-medium">Warna Teks All:</label>
+          <input type="color" name="text_color" value={form.text_color} onChange={handleChange} className="w-12 h-8 border rounded" />
+          <span className="text-sm">{form.text_color}</span>
+        </div>
+
         <input name="global_title" value={form.global_title} onChange={handleChange} placeholder="Judul Global" className="w-full border rounded px-4 py-2" />
 
         <label className="flex items-center space-x-2">
@@ -185,6 +192,11 @@ export default function TreeDesignPage() {
               </p>
               <p>
                 <strong>🎨 Warna QR:</strong> {d.qr_color}
+                <span className="inline-block w-5 h-5 rounded border" style={{ backgroundColor: d.qr_color }}></span>
+              </p>
+              <p className="flex items-center gap-2">
+                <strong>🎯 Warna Teks All:</strong> {d.text_color}
+                <span className="inline-block w-5 h-5 rounded border" style={{ backgroundColor: d.text_color }}></span>
               </p>
               <p>
                 <strong>🖼 Tampilkan Logo:</strong> {d.show_logo ? "✅" : "❌"}

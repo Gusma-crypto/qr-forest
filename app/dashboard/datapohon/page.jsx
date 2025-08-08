@@ -229,7 +229,7 @@ export default function DataPohonTable() {
                 <td className="p-3 text-gray-600">{tree.name}</td>
                 <td className="p-3 text-gray-600">{tree.species}</td>
                 <td className="p-3 text-gray-600">{tree.location}</td>
-                <td className="p-3 text-gray-600">{tree.age} tahun</td>
+                <td className="p-3 text-gray-600">{new Date().getFullYear() - tree.year_planted} tahun</td>
                 <td className="p-3 text-center">{tree.qr_code ? <img src={tree.qr_code} alt="QR" className="w-16 h-16 object-contain mx-auto" /> : <span className="text-gray-400">Tidak ada</span>}</td>
                 <td className="p-3 text-center space-x-2">
                   {/* Tombol Unduh */}

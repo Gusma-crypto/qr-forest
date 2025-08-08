@@ -10,7 +10,8 @@ export default function CreateTreeForm() {
     name: "",
     species: "",
     location: "",
-    age: "",
+    description: "",
+    year_planted: "",
     foto: null,
   });
 
@@ -38,7 +39,8 @@ export default function CreateTreeForm() {
       name: "",
       species: "",
       location: "",
-      age: "",
+      description: "",
+      year_planted: "",
       foto: null,
     });
     setImagePreview(null);
@@ -55,7 +57,8 @@ export default function CreateTreeForm() {
       data.append("name", formData.name);
       data.append("species", formData.species);
       data.append("location", formData.location);
-      data.append("age", formData.age);
+      data.append("description", formData.description);
+      data.append("year_planted", formData.year_planted);
       if (formData.foto) {
         data.append("image", formData.foto);
       }
@@ -121,7 +124,17 @@ export default function CreateTreeForm() {
         <input type="text" name="name" value={formData.name} placeholder="Nama Pohon" className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring text-sm" onChange={handleChange} required />
         <input type="text" name="species" value={formData.species} placeholder="Spesies" className="w-full border border-gray-300 rounded px-4 py-2 text-sm" onChange={handleChange} required />
         <textarea name="location" value={formData.location} placeholder="Lokasi (Koordinat atau deskripsi)" className="w-full border border-gray-300 rounded px-4 py-2 text-sm" onChange={handleChange} required />
-        <input type="number" name="age" value={formData.age} placeholder="Umur (Tahun)" className="w-full border border-gray-300 rounded px-4 py-2 text-sm" onChange={handleChange} required />
+        <textarea name="description" value={formData.description} onChange={handleChange} className="w-full border border-gray-300 rounded px-4 py-2 text-sm" required placeholder="Deskripsi pohon" />
+        <input
+          type="number"
+          name="year_planted"
+          value={formData.year_planted}
+          onChange={handleChange}
+          min="1900"
+          max={new Date().getFullYear()}
+          className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring text-sm"
+          required
+        />
         <input type="file" name="foto" accept="image/*" className="w-full border border-gray-300 rounded px-4 py-2 text-sm" onChange={handleChange} />
 
         {imagePreview && (
