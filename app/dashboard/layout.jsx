@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import FooterDashboard from "@/components/FooterDashboard";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProtectedPageMidlewares from "@/components/ProtectedPageMidlewares";
@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }) {
           {children}
           <ToastContainer position="top-center" autoClose={3000} />
         </main>
-        <Footer />
+        <FooterDashboard />
       </div>
     </ProtectedPageMidlewares>
   );

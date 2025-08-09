@@ -60,7 +60,6 @@ export default function Navbar() {
 
         {/* User and Logout - Desktop */}
         <div className="hidden md:flex items-center gap-4">
-          <span className="text-sm">👋 {userName || "User"}</span>
           <button onClick={handleLogout} className="bg-white text-green-700 font-semibold px-3 py-1 rounded-lg hover:bg-green-100 transition">
             Logout
           </button>
