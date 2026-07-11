@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  outputFileTracingRoot: new URL(".", import.meta.url).pathname,
   images: {
-    domains: ["localhost", "api-qrcode.fornesia.id", "192.168.4.254"], // ✅ tambahkan hostname API
+    domains: ["localhost"],
   },
 };
 

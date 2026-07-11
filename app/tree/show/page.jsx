@@ -1,10 +1,10 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import API from "@/lib/api";
 
-export default function TreeShowPage() {
+function TreeShowContent() {
   const searchParams = useSearchParams();
   const q = searchParams.get("q");
   const [tree, setTree] = useState(null);
@@ -104,5 +104,13 @@ export default function TreeShowPage() {
         <div className="bg-green-700 text-white text-center p-4 text-sm">🌱 Terima kasih telah berkunjung dan peduli lingkungan</div>
       </div>
     </div>
+  );
+}
+
+export default function TreeShowPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center text-lg font-semibold">Memuat data...</div>}>
+      <TreeShowContent />
+    </Suspense>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import API from '@/lib/api';
 
 export default function LogoutButton() {
   const router = useRouter();
@@ -15,20 +16,7 @@ export default function LogoutButton() {
         return;
       }
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refreshToken }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(`❌ ${data.message}`);
-        return;
-      }
+      await API.post('/auth/logout', { refreshToken });
 
       // Hapus token dari localStorage
       localStorage.removeItem('token');

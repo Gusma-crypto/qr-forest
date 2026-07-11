@@ -1,117 +1,185 @@
-# 🌲 QR Code Frontend (Next.js)|| gunardi
+# QRForest Frontend
 
-Ini adalah frontend untuk aplikasi **Forest QR Management** yang dibangun dengan **Next.js** dan Tailwind CSS. Sistem ini terhubung ke backend Express.js dan digunakan untuk mengelola data pohon, generate QR Code, serta mendownload PDF dengan atau tanpa desain.
+Frontend Next.js untuk aplikasi QRForest. Aplikasi ini terhubung ke backend `forest-management` untuk login admin, mengelola data pohon, melihat dashboard, mengatur desain QR code, dan menampilkan halaman publik hasil scan QR.
 
----
+## Fitur
 
-## 🚀 Fitur
+- Landing/home page QRForest.
+- Login dan register.
+- Dashboard admin.
+- CRUD data pohon.
+- Edit data pohon dan foto pohon.
+- Cetak QR code.
+- Desain QR code.
+- Profile admin.
+- Halaman publik hasil scan QR.
+- Axios client dengan `x-api-key` dan JWT bearer token.
+- UI responsif dengan animasi.
 
-- ✅ Login dan Register dengan JWT
-- ✅ Role-based Access (Admin & User)
-- ✅ CRUD Data Pohon
-- ✅ Generate QR Code tiap pohon
-- ✅ Download semua QR Code dalam bentuk PDF (desain & tanpa desain)
-- ✅ Halaman detail pohon dengan penjelasan AI (opsional)
-- ✅ Responsif dengan Tailwind CSS
-- ✅ Proteksi halaman dengan middleware JWT
+## Tech Stack
 
----
+- Next.js 15
+- React 19
+- Tailwind CSS
+- Axios
+- react-hook-form
+- yup
+- framer-motion
+- lucide-react
+- react-toastify
 
-## 🧑‍💻 Tech Stack
-
-- **Frontend:** [Next.js 14](https://nextjs.org/)
-- **Style:** [Tailwind CSS](https://tailwindcss.com/)
-- **HTTP Client:** [Axios](https://axios-http.com/)
-- **Form Validation:** react-hook-form + yup
-- **State Management:** React hooks + Context API
-
----
-
-## 🛠️ Instalasi
+## Instalasi Lokal
 
 ```bash
-git clone https://github.com/username/qr-frontend.git
-cd qr-frontend
+cd qr-forest
 npm install
 ```
 
 Buat file `.env.local`:
 
-```
-NEXT_PUBLIC_API_URL=http://localhost:3001/api
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_API_KEY=isi_sama_dengan_API_ACCESS_KEY_backend
 ```
 
-Lalu jalankan:
+Catatan:
+
+- `NEXT_PUBLIC_API_URL` memakai origin backend, bukan `/api`.
+- Axios otomatis menambahkan `/api`.
+- `NEXT_PUBLIC_API_KEY` akan terlihat di browser. Ini hanya filter tambahan, bukan secret utama.
+
+## Menjalankan Frontend
+
+Pastikan backend sudah berjalan:
 
 ```bash
+cd ../forest-management
+npm run start
+```
+
+Jalankan frontend:
+
+```bash
+cd ../qr-forest
 npm run dev
 ```
 
----
+Frontend berjalan di:
 
-## 🗂️ Struktur Folder
-
+```text
+http://localhost:3000
 ```
-app/
-├── login/
-│   └── page.jsx           # Halaman Login
-├── register/
-│   └── page.jsx           # Halaman Register
-├── dashboard/
-│   ├── layout.jsx         # Layout dashboard
-│   └── datapohon/
-│       ├── page.jsx       # Halaman utama Data Pohon
-│       └── DetailButton.jsx
+
+## Dokumentasi Backend
+
+Saat backend berjalan, buka:
+
+- `http://localhost:3001/` -> overview backend.
+- `http://localhost:3001/frontend-docs` -> panduan koneksi frontend.
+- `http://localhost:3001/api-docs` -> Swagger UI.
+- `http://localhost:3001/health` -> health check.
+
+## Alur Auth
+
+1. Frontend kirim login ke `/api/auth/login`.
+2. Header wajib:
+   - `x-api-key`
+   - `Content-Type: application/json`
+3. Backend mengembalikan `accessToken` dan `refreshToken`.
+4. Frontend menyimpan token di `localStorage`.
+5. Request dashboard/admin berikutnya memakai:
+   - `x-api-key`
+   - `Authorization: Bearer <accessToken>`
+
+## Endpoint yang Dipakai
+
+| Fitur | Endpoint Backend |
+| --- | --- |
+| Login | `POST /api/auth/login` |
+| Register | `POST /api/auth/register` |
+| Data pohon | `GET /api/trees` |
+| Tambah pohon | `POST /api/trees` |
+| Detail pohon | `GET /api/trees/:id` |
+| Edit pohon | `PUT /api/trees/:id` |
+| Hapus pohon | `DELETE /api/trees/:id` |
+| Halaman scan QR | `GET /api/tree/show?q=...` |
+| Dashboard | `GET /api/dashboard` |
+| Profile | `/api/profile` |
+| Desain QR | `/api/treedesign` |
+
+## Struktur Penting
+
+```text
+qr-forest/
+├── app/
+│   ├── page.js
+│   ├── login/
+│   ├── signup/
+│   ├── dashboard/
+│   │   ├── page.jsx
+│   │   ├── datapohon/
+│   │   ├── profile/
+│   │   └── treedesign/
+│   └── tree/show/
 ├── components/
-│   └── Navbar.jsx         # Navigasi utama
 ├── lib/
-│   └── api.js             # Axios instance
+│   └── api.js
+├── public/
+├── .env.local
+└── .env.production.example
 ```
 
----
-
-## 🧾 Endpoints API (Dari Backend)
-
-| Fungsi                       | Endpoint                              | Method |
-| ---------------------------- | ------------------------------------- | ------ |
-| Login                        | `/api/login`                          | POST   |
-| Register                     | `/api/register`                       | POST   |
-| Ambil semua pohon            | `/api/trees`                          | GET    |
-| Tambah pohon                 | `/api/trees`                          | POST   |
-| Download PDF (tanpa desain)  | `/static/pdf/qr-without-template.pdf` | GET    |
-| Download PDF (dengan desain) | `/api/trees/printallPDFDesign`        | POST   |
-
----
-
-## 🔒 Proteksi Route
-
-Setiap route di dalam `/dashboard/*` hanya dapat diakses jika JWT token valid. Token disimpan di `localStorage`.
-
----
-
-## 📦 Build untuk Produksi
+## Build Production
 
 ```bash
 npm run build
-npm start
+npm run start
 ```
 
----
+Template env production:
 
-## 📝 Catatan
+```text
+qr-forest/.env.production.example
+../PRODUCTION_TEMPLATE.md
+```
 
-- Pastikan backend telah berjalan terlebih dahulu (`qr-backend`).
-- Folder `pdfs` di backend harus dapat diakses publik jika ingin download tanpa desain.
-- Jangan lupa sesuaikan URL `NEXT_PUBLIC_API_URL` di `.env.local`.
+Contoh production env:
 
----
+```env
+NEXT_PUBLIC_API_URL=https://api.domain-kamu.com
+NEXT_PUBLIC_API_KEY=isi_sama_dengan_API_ACCESS_KEY_backend
+```
 
-## 👨‍💻 Kontribusi
+## Catatan Production
 
-Pull request sangat diterima. Untuk masalah besar, silakan buka [Issue](https://github.com/username/qr-frontend/issues) terlebih dahulu.
+- Pastikan `NEXT_PUBLIC_API_URL` memakai HTTPS.
+- Pastikan backend `CORS_ORIGIN` berisi domain frontend production.
+- Jangan mengandalkan `NEXT_PUBLIC_API_KEY` sebagai secret.
+- Gunakan domain berbeda atau subdomain:
+  - Frontend: `https://domain-kamu.com`
+  - Backend: `https://api.domain-kamu.com`
 
----
+## Troubleshooting
 
-## 📄 Lisensi
+Jika login gagal `401 API key tidak valid`:
 
-MIT License.
+- Cek `NEXT_PUBLIC_API_KEY` frontend.
+- Pastikan nilainya sama dengan `API_ACCESS_KEY` backend.
+- Restart dev server frontend setelah mengubah `.env.local`.
+
+Jika CORS error:
+
+- Cek `CORS_ORIGIN` di backend.
+- Untuk lokal, isi:
+
+```env
+CORS_ORIGIN=http://localhost:3000
+```
+
+Jika API URL salah:
+
+- `NEXT_PUBLIC_API_URL` harus `http://localhost:3001`, bukan `http://localhost:3001/api`.
+
+## Developer
+
+Dibuat untuk QRForest / Forest Management.

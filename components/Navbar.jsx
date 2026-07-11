@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, X, TreePine, Settings, QrCode, User, Home as HomeIcon } from "lucide-react";
+import { LayoutDashboard, Menu, X, TreePine, Settings, QrCode, User } from "lucide-react";
 
 export default function Navbar() {
   const router = useRouter();
@@ -26,31 +26,36 @@ export default function Navbar() {
     router.push("/login");
   };
 
-  const navClass = isScrolled ? "bg-white text-green-800 shadow-md" : "bg-green-800 text-white";
+  const navClass = isScrolled ? "border-emerald-100 bg-white/90 text-emerald-950 shadow-lg shadow-emerald-950/5" : "border-white/10 bg-emerald-950/90 text-white";
 
   return (
-    <nav className={`fixed top-0 left-0 w-full z-50 px-6 py-4 transition-all duration-300 backdrop-blur-md ${navClass}`}>
-      <div className="max-w-6xl mx-auto flex justify-between items-center">
-        <div className="text-xl font-bold">QRForest</div>
+    <nav className={`fixed left-0 top-0 z-50 w-full border-b px-6 py-4 backdrop-blur-xl transition-all duration-300 ${navClass}`}>
+      <div className="mx-auto flex max-w-7xl items-center justify-between">
+        <div className="flex items-center gap-2 text-xl font-bold">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/25">
+            <TreePine className="h-5 w-5" />
+          </span>
+          QRForest
+        </div>
 
         {/* Desktop Menu */}
-        <ul className="hidden md:flex gap-6 text-sm md:text-base items-center">
-          <li className="hover:text-green-300 cursor-pointer flex items-center gap-1" onClick={() => router.push("/dashboard")}>
-            <HomeIcon className="w-4 h-4" /> Home
+        <ul className="hidden items-center gap-2 text-sm md:flex">
+          <li className="flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 transition hover:bg-emerald-500/10 hover:text-emerald-600" onClick={() => router.push("/dashboard")}>
+            <LayoutDashboard className="w-4 h-4" /> Dashboard
           </li>
-          <li className="hover:text-green-300 cursor-pointer flex items-center gap-1" onClick={() => router.push("/dashboard/datapohon")}>
+          <li className="flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 transition hover:bg-emerald-500/10 hover:text-emerald-600" onClick={() => router.push("/dashboard/datapohon")}>
             <TreePine className="w-4 h-4" /> Data Pohon
           </li>
           <li className="relative group cursor-pointer">
-            <div className="flex items-center gap-1 hover:text-green-300" onClick={() => setShowSettings(!showSettings)}>
+            <div className="flex items-center gap-2 rounded-xl px-3 py-2 transition hover:bg-emerald-500/10 hover:text-emerald-600" onClick={() => setShowSettings(!showSettings)}>
               <Settings className="w-4 h-4" /> Settings
             </div>
             {showSettings && (
-              <ul className="absolute top-full mt-2 left-0 bg-white text-green-800 border rounded-md shadow-md p-2 space-y-2 w-48 z-10">
-                <li onClick={() => router.push("/dashboard/treedesign")} className="flex items-center gap-2 hover:text-green-600 cursor-pointer">
+              <ul className="absolute left-0 top-full z-10 mt-2 w-52 space-y-1 rounded-2xl border border-emerald-100 bg-white p-2 text-emerald-950 shadow-xl shadow-emerald-950/10">
+                <li onClick={() => router.push("/dashboard/treedesign")} className="flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 transition hover:bg-emerald-50 hover:text-emerald-700">
                   <QrCode className="w-4 h-4" /> Desain QRCode
                 </li>
-                <li onClick={() => router.push("/dashboard/profile")} className="flex items-center gap-2 hover:text-green-600 cursor-pointer">
+                <li onClick={() => router.push("/dashboard/profile")} className="flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 transition hover:bg-emerald-50 hover:text-emerald-700">
                   <User className="w-4 h-4" /> Setting Profile
                 </li>
               </ul>
@@ -60,20 +65,20 @@ export default function Navbar() {
 
         {/* User and Logout - Desktop */}
         <div className="hidden md:flex items-center gap-4">
-          <button onClick={handleLogout} className="bg-white text-green-700 font-semibold px-3 py-1 rounded-lg hover:bg-green-100 transition">
+          <button onClick={handleLogout} className="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-emerald-800 shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-50">
             Logout
           </button>
         </div>
 
         {/* Mobile Menu Toggle */}
-        <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-white">
+        <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
       {/* Mobile Menu */}
       <div className={`md:hidden transition-all duration-300 overflow-hidden ${isOpen ? "max-h-96 mt-4" : "max-h-0"}`}>
-        <ul className="flex flex-col gap-3 text-sm bg-white text-green-800 p-4 rounded-lg shadow-md">
+        <ul className="flex flex-col gap-3 rounded-2xl bg-white p-4 text-sm text-emerald-950 shadow-xl">
           <li
             onClick={() => {
               setIsOpen(false);
@@ -81,7 +86,7 @@ export default function Navbar() {
             }}
           >
             <span className="flex items-center gap-2">
-              <HomeIcon className="w-4 h-4" /> Home
+              <LayoutDashboard className="w-4 h-4" /> Dashboard
             </span>
           </li>
           <li
@@ -122,7 +127,7 @@ export default function Navbar() {
                 setIsOpen(false);
                 handleLogout();
               }}
-              className="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700"
+            className="rounded-xl bg-emerald-700 px-3 py-2 text-white hover:bg-emerald-800"
             >
               Logout
             </button>

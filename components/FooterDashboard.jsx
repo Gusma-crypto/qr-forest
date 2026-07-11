@@ -1,9 +1,9 @@
 export default function FooterDashboard() {
   return (
-    <footer className="fixed bottom-0 left-0 w-full bg-green-800 text-white py-3 shadow-inner z-40">
-      <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm">
+    <footer className="border-t border-emerald-100 bg-white/80 py-5 text-slate-600 backdrop-blur">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 text-sm md:flex-row sm:px-6 lg:px-8">
         <span>© {new Date().getFullYear()} QRForest. All rights reserved.</span>
-        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" className="text-green-200 hover:text-white transition mt-1 md:mt-0">
+        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" className="font-medium text-emerald-700 transition hover:text-emerald-900">
           Gunardi
         </a>
       </div>

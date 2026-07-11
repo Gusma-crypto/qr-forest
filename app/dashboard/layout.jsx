@@ -10,9 +10,9 @@ export const metadata = {
 export default function DashboardLayout({ children }) {
   return (
     <ProtectedPageMidlewares>
-      <div className="min-h-screen bg-green-100 pt-24">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,#d1fae5,transparent_32%),linear-gradient(135deg,#f8fafc_0%,#ecfdf5_48%,#eef2ff_100%)] pt-24">
         <Navbar />
-        <main className="bg-white p-6 rounded-t-3xl shadow-lg">
+        <main className="mx-auto min-h-[calc(100vh-8rem)] max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
           {children}
           <ToastContainer position="top-center" autoClose={3000} />
         </main>

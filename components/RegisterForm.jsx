@@ -2,9 +2,9 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import axios from 'axios';
 import { useState } from 'react';
 import Link from 'next/link';
+import API from '@/lib/api';
 
 const schema = yup.object().shape({
   username: yup.string().required('Username wajib diisi'),
@@ -20,7 +20,7 @@ export default function RegisterForm() {
 
   const onSubmit = async (data) => {
     try {
-      const res = await axios.post('/api/register', data);
+      await API.post('/auth/register', data);
       setMessage('Registrasi berhasil');
     } catch (error) {
       setMessage(error.response?.data?.message || 'Gagal registrasi');
