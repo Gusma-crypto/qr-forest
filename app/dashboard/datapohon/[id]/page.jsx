@@ -29,7 +29,7 @@ export default function TreeDetailPage() {
     fetchTree();
   }, [treeId]);
 
-  const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+  const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
   const imageUrl = tree?.foto_pohon_path ? `${baseURL}/${tree.foto_pohon_path}` : null;
 
   const handleAskAI = async () => {
